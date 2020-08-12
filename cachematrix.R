@@ -1,15 +1,44 @@
-## Put comments here that give an overall description of what your
-## functions do
+## Two helper functions which improve performance when dealing 
+## repeatedly with the same inverse of a matrix
 
-## Write a short comment describing this function
+## Creates an improved Matrix object which allowes caching of a matrix inverse
 
 makeCacheMatrix <- function(x = matrix()) {
-
+  i <- NULL
+  set <- function(m) {
+    x <<- m
+    i <<- NULL
+  }
+  
+  get <- function()
+    x
+  
+  setInverse <- function(inverse)
+    i <<- inverse
+  
+  getInverse <- function()
+    i
+  
+  list(
+    set = set,
+    get = get,
+    setInverse = setInverse,
+    getInverse = getInverse
+  )
 }
 
 
-## Write a short comment describing this function
+## helper function which optimizes the computation of the inverse of a matrix
+## by caching the result once it is calculated
 
 cacheSolve <- function(x, ...) {
-        ## Return a matrix that is the inverse of 'x'
+  inverse <- x$getInverse()
+  if(!is.null(inverse)){
+    message("Getting cached inverse")
+    return(inverse)
+  }
+  matrix <- x$get()
+  inverse <- solve(matrix)
+  x$setInverse(inverse)
+  inverse
 }
